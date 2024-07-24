@@ -1,0 +1,255 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Condition": {
+                "actions": {
+                    "Terminate": {
+                        "inputs": {
+                            "runStatus": "Cancelled"
+                        },
+                        "type": "Terminate"
+                    }
+                },
+                "else": {
+                    "actions": {
+                        "Send_email_(V2)": {
+                            "inputs": {
+                                "body": {
+                                    "Body": "<p><span>\n</span>From: @{triggerBody()?['SenderName']} &lt;@{triggerBody()?['From']}&gt;</p><p>To: @{triggerBody()?['To']}</p><p>CC: @{triggerBody()?['Cc']}</p><p>Has Attachments? @{triggerBody()?['HasAttachments']}&lt;-- If <b><strong>True</strong></b>, check Gmail!<span>\n</span>---<span>\n</span></p><p>@{triggerBody()?['Body']}</p>",
+                                    "Subject": "@{variables('gmailprefix')} | @{triggerBody()?['Subject']}",
+                                    "To": "@variables('m365emailaddress1')"
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['gmail-1']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/v2/Mail"
+                            },
+                            "type": "ApiConnection"
+                        }
+                    }
+                },
+                "expression": {
+                    "or": [
+                        {
+                            "contains": [
+                                "@triggerBody()?['From']",
+                                "@variables('m365emailaddress1')"
+                            ]
+                        },
+                        {
+                            "contains": [
+                                "@triggerBody()?['From']",
+                                "@variables('m365emailaddress2')"
+                            ]
+                        },
+                        {
+                            "contains": [
+                                "@triggerBody()?['To']",
+                                "@variables('m365emailaddress1')"
+                            ]
+                        },
+                        {
+                            "contains": [
+                                "@triggerBody()?['To']",
+                                "@variables('m365emailaddress2')"
+                            ]
+                        },
+                        {
+                            "contains": [
+                                "@triggerBody()?['Cc']",
+                                "@variables('m365emailaddress1')"
+                            ]
+                        },
+                        {
+                            "contains": [
+                                "@triggerBody()?['Cc']",
+                                "@variables('m365emailaddress2')"
+                            ]
+                        },
+                        {
+                            "contains": [
+                                "@triggerBody()?['From']",
+                                "@variables('gmailaddress')"
+                            ]
+                        },
+                        {
+                            "contains": [
+                                "@triggerBody()?['SenderName']",
+                                "@variables('sendersName')"
+                            ]
+                        },
+                        {
+                            "startsWith": [
+                                "@triggerBody()?['Subject']",
+                                "@{variables('m365emailprefix')} |"
+                            ]
+                        },
+                        {
+                            "contains": [
+                                "@triggerBody()?['From']",
+                                "noreply"
+                            ]
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_-_gmailprefix": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "If"
+            },
+            "Initialize_variable_-_gmailaddress": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "gmailaddress",
+                            "type": "string",
+                            "value": "johndoe@gmail.com"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_-_m365emailaddress2": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_-_gmailprefix": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "gmailprefix",
+                            "type": "string",
+                            "value": "RT"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_-_gmailaddress": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_-_m365emailaddress1": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "m365emailaddress1",
+                            "type": "string",
+                            "value": "jdoe@raztype.com"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "m365emailprefix": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_-_m365emailaddress2": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "m365emailaddress2",
+                            "type": "string",
+                            "value": "john.doe@raztype.com"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_-_m365emailaddress1": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_-_sendersName": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "sendersName",
+                            "type": "string",
+                            "value": "Rafferty Uy"
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "InitializeVariable"
+            },
+            "m365emailprefix": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "m365emailprefix",
+                            "type": "string",
+                            "value": "RT"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_-_sendersName": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "When_a_new_email_arrives": {
+                "evaluatedRecurrence": {
+                    "frequency": "Minute",
+                    "interval": 10,
+                    "timeZone": "Singapore Standard Time"
+                },
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['gmail-1']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/Mail/OnNewEmail",
+                    "queries": {
+                        "importance": "All",
+                        "includeAttachments": true,
+                        "label": "INBOX",
+                        "starred": "All"
+                    }
+                },
+                "recurrence": {
+                    "frequency": "Minute",
+                    "interval": 10,
+                    "timeZone": "Singapore Standard Time"
+                },
+                "type": "ApiConnection"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {
+                "gmail-1": {
+                    "connectionId": "/subscriptions/7308e0b7-489d-4f8b-80b7-832b0662d47d/resourceGroups/github-sync-rg/providers/Microsoft.Web/connections/gmail-1",
+                    "connectionName": "gmail-1",
+                    "id": "/subscriptions/7308e0b7-489d-4f8b-80b7-832b0662d47d/providers/Microsoft.Web/locations/eastus/managedApis/gmail"
+                }
+            }
+        }
+    }
+}

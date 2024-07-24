@@ -1,0 +1,1249 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "connections_gmail_name": {
+            "defaultValue": "gmail",
+            "type": "String"
+        },
+        "connections_office365_name": {
+            "defaultValue": "office365",
+            "type": "String"
+        },
+        "workflows_raz_gsuitetom365_cal_name": {
+            "defaultValue": "raz-gsuitetom365-cal",
+            "type": "String"
+        },
+        "workflows_raz_m365togsuite_cal_name": {
+            "defaultValue": "raz-m365togsuite-cal",
+            "type": "String"
+        },
+        "workflows_raz_gsuitetom365_email_name": {
+            "defaultValue": "raz-gsuitetom365-email",
+            "type": "String"
+        },
+        "connections_googlecalendar_name": {
+            "defaultValue": "googlecalendar",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Web/connections",
+            "apiVersion": "2016-06-01",
+            "name": "[parameters('connections_gmail_name')]",
+            "location": "eastus",
+            "kind": "V1",
+            "properties": {
+                "displayName": "gmail",
+                "statuses": [
+                    {
+                        "status": "Connected"
+                    }
+                ],
+                "customParameterValues": {},
+                "createdTime": "2024-07-23T11:46:57.2149397Z",
+                "changedTime": "2024-07-24T03:56:55.8683398Z",
+                "api": {
+                    "name": "gmail",
+                    "displayName": "Gmail",
+                    "description": "Gmail is a web-based email service from Google. With the Gmail connector, you can perform actions such as send or receive e-mail messages, and trigger flows on new e-mails.",
+                    "iconUri": "https://connectoricons-prod.azureedge.net/u/jayawan/releases/v1.0.1694/1.0.1694.3753/gmail/icon.png",
+                    "brandColor": "#20427f",
+                    "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'managedApis/gmail')]",
+                    "type": "Microsoft.Web/locations/managedApis"
+                },
+                "testLinks": [
+                    {
+                        "requestUri": "[concat('https://management.azure.com:443/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Web/connections/', parameters('connections_gmail_name'), '/extensions/proxy/TestConnection?api-version=2016-06-01')]",
+                        "method": "get"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Web/connections",
+            "apiVersion": "2016-06-01",
+            "name": "[parameters('connections_googlecalendar_name')]",
+            "location": "eastus",
+            "kind": "V1",
+            "properties": {
+                "displayName": "johndoe@gmail.com",
+                "statuses": [
+                    {
+                        "status": "Connected"
+                    }
+                ],
+                "customParameterValues": {},
+                "nonSecretParameterValues": {},
+                "createdTime": "2024-07-24T01:36:25.5225724Z",
+                "changedTime": "2024-07-24T03:44:53.176643Z",
+                "api": {
+                    "name": "googlecalendar",
+                    "displayName": "Google Calendar",
+                    "description": "Google Calendar lets you organize your schedule and share events with co-workers and friends. With Google's free online calendar, it's easy to keep track of your daily schedule.",
+                    "iconUri": "https://connectoricons-prod.azureedge.net/releases/v1.0.1686/1.0.1686.3695/googlecalendar/icon.png",
+                    "brandColor": "#3b5998",
+                    "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'managedApis/googlecalendar')]",
+                    "type": "Microsoft.Web/locations/managedApis"
+                },
+                "testLinks": [
+                    {
+                        "requestUri": "[concat('https://management.azure.com:443/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Web/connections/', parameters('connections_googlecalendar_name'), '/extensions/proxy/users/me/calendarList?api-version=2016-06-01')]",
+                        "method": "get"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Web/connections",
+            "apiVersion": "2016-06-01",
+            "name": "[parameters('connections_office365_name')]",
+            "location": "eastus",
+            "kind": "V1",
+            "properties": {
+                "displayName": "jdoe@raztype.com",
+                "statuses": [
+                    {
+                        "status": "Connected"
+                    }
+                ],
+                "customParameterValues": {},
+                "nonSecretParameterValues": {},
+                "createdTime": "2024-07-24T01:59:07.2282106Z",
+                "changedTime": "2024-07-24T04:02:49.3031677Z",
+                "api": {
+                    "name": "office365",
+                    "displayName": "Office 365 Outlook",
+                    "description": "Microsoft Office 365 is a cloud-based service that is designed to help meet your organization's needs for robust security, reliability, and user productivity.",
+                    "iconUri": "https://connectoricons-prod.azureedge.net/releases/v1.0.1686/1.0.1686.3706/office365/icon.png",
+                    "brandColor": "#0078D4",
+                    "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'managedApis/office365')]",
+                    "type": "Microsoft.Web/locations/managedApis"
+                },
+                "testLinks": [
+                    {
+                        "requestUri": "[concat('https://management.azure.com:443/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Web/connections/', parameters('connections_office365_name'), '/extensions/proxy/testconnection?api-version=2016-06-01')]",
+                        "method": "get"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('workflows_raz_gsuitetom365_email_name')]",
+            "location": "eastus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/connections', parameters('connections_gmail_name'))]"
+            ],
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "When_a_new_email_arrives": {
+                            "recurrence": {
+                                "frequency": "Minute",
+                                "interval": 10,
+                                "timeZone": "Singapore Standard Time"
+                            },
+                            "evaluatedRecurrence": {
+                                "frequency": "Minute",
+                                "interval": 10,
+                                "timeZone": "Singapore Standard Time"
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['gmail']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "/Mail/OnNewEmail",
+                                "queries": {
+                                    "importance": "All",
+                                    "starred": "All",
+                                    "includeAttachments": true,
+                                    "label": "INBOX"
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "Condition": {
+                            "actions": {
+                                "Terminate": {
+                                    "type": "Terminate",
+                                    "inputs": {
+                                        "runStatus": "Cancelled"
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "Initialize_variable_-_gmailprefix": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "else": {
+                                "actions": {
+                                    "Send_email_(V2)": {
+                                        "type": "ApiConnection",
+                                        "inputs": {
+                                            "host": {
+                                                "connection": {
+                                                    "name": "@parameters('$connections')['gmail']['connectionId']"
+                                                }
+                                            },
+                                            "method": "post",
+                                            "body": {
+                                                "To": "@variables('m365emailaddress1')",
+                                                "Subject": "@{variables('gmailprefix')} | @{triggerBody()?['Subject']}",
+                                                "Body": "<p><span>\n</span>From: @{triggerBody()?['SenderName']} &lt;@{triggerBody()?['From']}&gt;</p><p>To: @{triggerBody()?['To']}</p><p>CC: @{triggerBody()?['Cc']}</p><p>Has Attachments? @{triggerBody()?['HasAttachments']}&lt;-- If <b><strong>True</strong></b>, check Gmail!<span>\n</span>---<span>\n</span></p><p>@{triggerBody()?['Body']}</p>"
+                                            },
+                                            "path": "/v2/Mail"
+                                        }
+                                    }
+                                }
+                            },
+                            "expression": {
+                                "or": [
+                                    {
+                                        "contains": [
+                                            "@triggerBody()?['From']",
+                                            "@variables('m365emailaddress1')"
+                                        ]
+                                    },
+                                    {
+                                        "contains": [
+                                            "@triggerBody()?['From']",
+                                            "@variables('m365emailaddress2')"
+                                        ]
+                                    },
+                                    {
+                                        "contains": [
+                                            "@triggerBody()?['To']",
+                                            "@variables('m365emailaddress1')"
+                                        ]
+                                    },
+                                    {
+                                        "contains": [
+                                            "@triggerBody()?['To']",
+                                            "@variables('m365emailaddress2')"
+                                        ]
+                                    },
+                                    {
+                                        "contains": [
+                                            "@triggerBody()?['Cc']",
+                                            "@variables('m365emailaddress1')"
+                                        ]
+                                    },
+                                    {
+                                        "contains": [
+                                            "@triggerBody()?['Cc']",
+                                            "@variables('m365emailaddress2')"
+                                        ]
+                                    },
+                                    {
+                                        "contains": [
+                                            "@triggerBody()?['From']",
+                                            "@variables('gmailaddress')"
+                                        ]
+                                    },
+                                    {
+                                        "contains": [
+                                            "@triggerBody()?['SenderName']",
+                                            "@variables('sendersName')"
+                                        ]
+                                    },
+                                    {
+                                        "startsWith": [
+                                            "@triggerBody()?['Subject']",
+                                            "@{variables('m365emailprefix')} |"
+                                        ]
+                                    },
+                                    {
+                                        "contains": [
+                                            "@triggerBody()?['From']",
+                                            "noreply"
+                                        ]
+                                    }
+                                ]
+                            },
+                            "type": "If"
+                        },
+                        "Initialize_variable_-_m365emailaddress1": {
+                            "runAfter": {
+                                "m365emailprefix": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "m365emailaddress1",
+                                        "type": "string",
+                                        "value": "jdoe@raztype.com"
+                                    }
+                                ]
+                            }
+                        },
+                        "Initialize_variable_-_m365emailaddress2": {
+                            "runAfter": {
+                                "Initialize_variable_-_m365emailaddress1": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "m365emailaddress2",
+                                        "type": "string",
+                                        "value": "john.doe@raztype.com"
+                                    }
+                                ]
+                            }
+                        },
+                        "Initialize_variable_-_gmailaddress": {
+                            "runAfter": {
+                                "Initialize_variable_-_m365emailaddress2": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "gmailaddress",
+                                        "type": "string",
+                                        "value": "johndoe@gmail.com"
+                                    }
+                                ]
+                            }
+                        },
+                        "Initialize_variable_-_sendersName": {
+                            "runAfter": {},
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "sendersName",
+                                        "type": "string",
+                                        "value": "Rafferty Uy"
+                                    }
+                                ]
+                            }
+                        },
+                        "m365emailprefix": {
+                            "runAfter": {
+                                "Initialize_variable_-_sendersName": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "m365emailprefix",
+                                        "type": "string",
+                                        "value": "RT"
+                                    }
+                                ]
+                            }
+                        },
+                        "Initialize_variable_-_gmailprefix": {
+                            "runAfter": {
+                                "Initialize_variable_-_gmailaddress": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "gmailprefix",
+                                        "type": "string",
+                                        "value": "GM"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "gmail": {
+                                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'managedApis/gmail')]",
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_gmail_name'))]",
+                                "connectionName": "gmail"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('workflows_raz_gsuitetom365_cal_name')]",
+            "location": "eastus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/connections', parameters('connections_googlecalendar_name'))]",
+                "[resourceId('Microsoft.Web/connections', parameters('connections_office365_name'))]"
+            ],
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "When_an_event_is_added,_updated_or_deleted_from_a_calendar": {
+                            "recurrence": {
+                                "frequency": "Minute",
+                                "interval": 10,
+                                "timeZone": "Singapore Standard Time"
+                            },
+                            "evaluatedRecurrence": {
+                                "frequency": "Minute",
+                                "interval": 10,
+                                "timeZone": "Singapore Standard Time"
+                            },
+                            "splitOn": "@triggerBody()?['items']",
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['googlecalendar']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "/trigger4/calendars/@{encodeURIComponent('johndoe@gmail.com')}/events"
+                            }
+                        }
+                    },
+                    "actions": {
+                        "Get_future_Outlook_events_with_same_name": {
+                            "runAfter": {
+                                "If_data_error_exists": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['office365']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "/datasets/calendars/v4/tables/@{encodeURIComponent(encodeURIComponent('AAMkADg5MGM3Y2I3LTgzMDQtNDY0NC1hZmFhLWNlYmY0ZTQ5ZWJkNABGAAAAAABIeDoW6vkuSa2sKAa7odSSBwBFN-BJANw3TqNKbSmWX8QgAAAAMNHFAAC5FSFDPVAdQ7t4SEgcJwgzAHebjAIiAAA='))}/items",
+                                "queries": {
+                                    "$filter": "Start/DateTime ge '@{convertTimeZone(utcNow(),'UTC','Singapore Standard Time','d')}' and contains(Subject, '__{{@{triggerBody()?['id']}}}__')"
+                                },
+                                "retryPolicy": {
+                                    "type": "fixed",
+                                    "count": 5,
+                                    "interval": "PT60S"
+                                }
+                            }
+                        },
+                        "If_ActionType_is_deleted": {
+                            "actions": {
+                                "For_each_event_to_delete": {
+                                    "foreach": "@body('Get_future_Outlook_events_with_same_name')?['value']",
+                                    "actions": {
+                                        "Delete_event_(V2)": {
+                                            "type": "ApiConnection",
+                                            "inputs": {
+                                                "host": {
+                                                    "connection": {
+                                                        "name": "@parameters('$connections')['office365']['connectionId']"
+                                                    }
+                                                },
+                                                "method": "delete",
+                                                "path": "/codeless/v1.0/me/calendars/@{encodeURIComponent(encodeURIComponent('AAMkADg5MGM3Y2I3LTgzMDQtNDY0NC1hZmFhLWNlYmY0ZTQ5ZWJkNABGAAAAAABIeDoW6vkuSa2sKAa7odSSBwBFN-BJANw3TqNKbSmWX8QgAAAAMNHFAAC5FSFDPVAdQ7t4SEgcJwgzAHebjAIiAAA='))}/events/@{encodeURIComponent(encodeURIComponent(items('For_each_event_to_delete')?['id']))}"
+                                            }
+                                        }
+                                    },
+                                    "type": "Foreach"
+                                }
+                            },
+                            "runAfter": {
+                                "Get_future_Outlook_events_with_same_name": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "else": {
+                                "actions": {
+                                    "If_event_does_not_exist": {
+                                        "actions": {
+                                            "Create_event_(V4)": {
+                                                "type": "ApiConnection",
+                                                "inputs": {
+                                                    "host": {
+                                                        "connection": {
+                                                            "name": "@parameters('$connections')['office365']['connectionId']"
+                                                        }
+                                                    },
+                                                    "method": "post",
+                                                    "body": {
+                                                        "subject": "@{variables('gmailprefix')} | @{triggerBody()?['summary']} | __{{@{triggerBody()?['id']}}}__",
+                                                        "start": "@triggerBody()?['start']",
+                                                        "end": "@triggerBody()?['end']",
+                                                        "timeZone": "(UTC+08:00) Kuala Lumpur, Singapore",
+                                                        "body": "<p>Organizer: @{triggerBody()?['organizer']}</p><br><p>Attendees: @{triggerBody()?['attendees']}</p><br><p>Body:</p><p>@{triggerBody()?['description']}</p>",
+                                                        "location": "@triggerBody()?['location']",
+                                                        "showAs": "busy"
+                                                    },
+                                                    "path": "/datasets/calendars/v4/tables/@{encodeURIComponent(encodeURIComponent('AAMkADg5MGM3Y2I3LTgzMDQtNDY0NC1hZmFhLWNlYmY0ZTQ5ZWJkNABGAAAAAABIeDoW6vkuSa2sKAa7odSSBwBFN-BJANw3TqNKbSmWX8QgAAAAMNHFAAC5FSFDPVAdQ7t4SEgcJwgzAHebjAIiAAA='))}/items"
+                                                }
+                                            }
+                                        },
+                                        "else": {
+                                            "actions": {
+                                                "For_each_search_result": {
+                                                    "foreach": "@body('Get_future_Outlook_events_with_same_name')?['value']",
+                                                    "actions": {
+                                                        "Update_event_(V4)": {
+                                                            "type": "ApiConnection",
+                                                            "inputs": {
+                                                                "host": {
+                                                                    "connection": {
+                                                                        "name": "@parameters('$connections')['office365']['connectionId']"
+                                                                    }
+                                                                },
+                                                                "method": "patch",
+                                                                "body": {
+                                                                    "subject": "@{variables('gmailprefix')} | @{triggerBody()?['summary']} | __{{@{triggerBody()?['id']}}}__",
+                                                                    "start": "@triggerBody()?['start']",
+                                                                    "end": "@triggerBody()?['end']",
+                                                                    "timeZone": "(UTC+08:00) Kuala Lumpur, Singapore",
+                                                                    "body": "<p>Organizer: @{triggerBody()?['organizer']}</p><br><p>Attendees: @{triggerBody()?['attendees']}</p><br><p>Body:</p><p>@{triggerBody()?['description']}</p>",
+                                                                    "location": "@triggerBody()?['location']",
+                                                                    "showAs": "busy"
+                                                                },
+                                                                "path": "/datasets/calendars/v4/tables/@{encodeURIComponent(encodeURIComponent('AAMkADg5MGM3Y2I3LTgzMDQtNDY0NC1hZmFhLWNlYmY0ZTQ5ZWJkNABGAAAAAABIeDoW6vkuSa2sKAa7odSSBwBFN-BJANw3TqNKbSmWX8QgAAAAMNHFAAC5FSFDPVAdQ7t4SEgcJwgzAHebjAIiAAA='))}/items/@{encodeURIComponent(encodeURIComponent(items('For_each_search_result')?['id']))}"
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "Foreach"
+                                                }
+                                            }
+                                        },
+                                        "expression": {
+                                            "and": [
+                                                {
+                                                    "equals": [
+                                                        "@empty(body('Get_future_Outlook_events_with_same_name')?['value'])",
+                                                        "@true"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "type": "If"
+                                    }
+                                }
+                            },
+                            "expression": {
+                                "and": [
+                                    {
+                                        "equals": [
+                                            "@triggerBody()?['actionType']",
+                                            "deleted"
+                                        ]
+                                    }
+                                ]
+                            },
+                            "type": "If"
+                        },
+                        "If_data_error_exists": {
+                            "actions": {
+                                "Terminate": {
+                                    "type": "Terminate",
+                                    "inputs": {
+                                        "runStatus": "Failed"
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "Initialize_variable_-_gmailprefix": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "else": {
+                                "actions": {
+                                    "If_synced": {
+                                        "actions": {
+                                            "Cancel": {
+                                                "type": "Terminate",
+                                                "inputs": {
+                                                    "runStatus": "Cancelled"
+                                                }
+                                            }
+                                        },
+                                        "else": {
+                                            "actions": {}
+                                        },
+                                        "expression": {
+                                            "or": [
+                                                {
+                                                    "equals": [
+                                                        "@contains(triggerBody()?['attendees'],variables('m365emailaddress1'))",
+                                                        "@true"
+                                                    ]
+                                                },
+                                                {
+                                                    "equals": [
+                                                        "@contains(triggerBody()?['attendees'],variables('m365emailaddress2'))",
+                                                        "@true"
+                                                    ]
+                                                },
+                                                {
+                                                    "equals": [
+                                                        "@triggerBody()?['summary']",
+                                                        "Blocked in @{variables('m365emailaddress1')}"
+                                                    ]
+                                                },
+                                                {
+                                                    "equals": [
+                                                        "@triggerBody()?['summary']",
+                                                        "Blocked in @{variables('m365emailaddress2')}"
+                                                    ]
+                                                },
+                                                {
+                                                    "startsWith": [
+                                                        "@triggerBody()?['summary']",
+                                                        "@{variables('m365emailprefix')} |"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "type": "If"
+                                    }
+                                }
+                            },
+                            "expression": {
+                                "and": [
+                                    {
+                                        "equals": [
+                                            "@triggerBody()?['summary']",
+                                            "@null"
+                                        ]
+                                    },
+                                    {
+                                        "not": {
+                                            "equals": [
+                                                "@triggerBody()?['actionType']",
+                                                "deleted"
+                                            ]
+                                        }
+                                    }
+                                ]
+                            },
+                            "type": "If"
+                        },
+                        "Initialize_variable_-_m365emailaddress1": {
+                            "runAfter": {
+                                "Initialize_variable_-_m365emailprefix": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "m365emailaddress1",
+                                        "type": "string",
+                                        "value": "jdoe@raztype.com"
+                                    }
+                                ]
+                            }
+                        },
+                        "Initialize_variable_-_m365emailaddress2": {
+                            "runAfter": {
+                                "Initialize_variable_-_m365emailaddress1": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "m365emailaddress2",
+                                        "type": "string",
+                                        "value": "john.doe@raztype.com"
+                                    }
+                                ]
+                            }
+                        },
+                        "Initialize_variable_-_m365emailprefix": {
+                            "runAfter": {},
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "m365emailprefix",
+                                        "type": "string",
+                                        "value": "RT"
+                                    }
+                                ]
+                            }
+                        },
+                        "Initialize_variable_-_gmailprefix": {
+                            "runAfter": {
+                                "Initialize_variable_-_m365emailaddress2": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "gmailprefix",
+                                        "type": "string",
+                                        "value": "GM"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "googlecalendar": {
+                                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'managedApis/googlecalendar')]",
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_googlecalendar_name'))]",
+                                "connectionName": "googlecalendar"
+                            },
+                            "office365": {
+                                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'managedApis/office365')]",
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_office365_name'))]",
+                                "connectionName": "office365"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('workflows_raz_m365togsuite_cal_name')]",
+            "location": "eastus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/connections', parameters('connections_office365_name'))]",
+                "[resourceId('Microsoft.Web/connections', parameters('connections_googlecalendar_name'))]"
+            ],
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "When_an_event_is_added,_updated_or_deleted_(V3)": {
+                            "type": "ApiConnectionNotification",
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['office365']['connectionId']"
+                                    }
+                                },
+                                "fetch": {
+                                    "pathTemplate": {
+                                        "parameters": {
+                                            "table": "@{encodeURIComponent(encodeURIComponent('AAMkADg5MGM3Y2I3LTgzMDQtNDY0NC1hZmFhLWNlYmY0ZTQ5ZWJkNABGAAAAAABIeDoW6vkuSa2sKAa7odSSBwBFN-BJANw3TqNKbSmWX8QgAAAAMNHFAAC5FSFDPVAdQ7t4SEgcJwgzAHebjAIiAAA='))}"
+                                        },
+                                        "template": "/datasets/calendars/v3/tables/{table}/onchangeditems"
+                                    },
+                                    "method": "get",
+                                    "queries": {
+                                        "incomingDays": 90,
+                                        "pastDays": 30
+                                    }
+                                },
+                                "subscribe": {
+                                    "pathTemplate": {
+                                        "parameters": {
+                                            "table": "@{encodeURIComponent(encodeURIComponent('AAMkADg5MGM3Y2I3LTgzMDQtNDY0NC1hZmFhLWNlYmY0ZTQ5ZWJkNABGAAAAAABIeDoW6vkuSa2sKAa7odSSBwBFN-BJANw3TqNKbSmWX8QgAAAAMNHFAAC5FSFDPVAdQ7t4SEgcJwgzAHebjAIiAAA='))}"
+                                        },
+                                        "template": "/{table}/GraphEventSubscriptionPoke/$subscriptions"
+                                    },
+                                    "body": {
+                                        "NotificationUrl": "@{listCallbackUrl()}"
+                                    },
+                                    "method": "post",
+                                    "queries": {
+                                        "incomingDays": 90,
+                                        "pastDays": 30
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "For_each": {
+                            "foreach": "@triggerBody()?['value']",
+                            "actions": {
+                                "If_data_error_exists": {
+                                    "actions": {
+                                        "Data_Error": {
+                                            "type": "Compose",
+                                            "inputs": "Data Error"
+                                        }
+                                    },
+                                    "else": {
+                                        "actions": {
+                                            "If_synced": {
+                                                "actions": {
+                                                    "Skip_-_Synced_-_Existing": {
+                                                        "type": "Compose",
+                                                        "inputs": "Skip (Synced/Existing Item)"
+                                                    }
+                                                },
+                                                "else": {
+                                                    "actions": {
+                                                        "Add_subject_if_not_private": {
+                                                            "actions": {
+                                                                "Set_varSubject_-_Private": {
+                                                                    "type": "SetVariable",
+                                                                    "inputs": {
+                                                                        "name": "varSubject",
+                                                                        "value": "@{variables('m365emailprefix')} | Busy | __{{@{items('For_each')?['id']}}}__"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "else": {
+                                                                "actions": {
+                                                                    "Set_varSubject_-_Standard": {
+                                                                        "type": "SetVariable",
+                                                                        "inputs": {
+                                                                            "name": "varSubject",
+                                                                            "value": "@{variables('m365emailprefix')} | @{items('For_each')?['subject']} | __{{@{items('For_each')?['id']}}}__"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            },
+                                                            "expression": {
+                                                                "or": [
+                                                                    {
+                                                                        "equals": [
+                                                                            "@items('For_each')?['subject']",
+                                                                            "@null"
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "equals": [
+                                                                            "@items('For_each')?['sensitivity']",
+                                                                            "private"
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "equals": [
+                                                                            "@items('For_each')?['sensitivity']",
+                                                                            "confidential"
+                                                                        ]
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "type": "If"
+                                                        },
+                                                        "Switch": {
+                                                            "runAfter": {
+                                                                "Add_subject_if_not_private": [
+                                                                    "Succeeded"
+                                                                ]
+                                                            },
+                                                            "cases": {
+                                                                "Case_free": {
+                                                                    "case": "free",
+                                                                    "actions": {
+                                                                        "Set_varStatus_-_cancelled": {
+                                                                            "type": "SetVariable",
+                                                                            "inputs": {
+                                                                                "name": "varStatus",
+                                                                                "value": "cancelled"
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "Case_tentative": {
+                                                                    "case": "tentative",
+                                                                    "actions": {
+                                                                        "Set_varStatus_-_tentative": {
+                                                                            "type": "SetVariable",
+                                                                            "inputs": {
+                                                                                "name": "varStatus",
+                                                                                "value": "tentative"
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            },
+                                                            "default": {
+                                                                "actions": {
+                                                                    "Set_varStatus_-_confirmed": {
+                                                                        "type": "SetVariable",
+                                                                        "inputs": {
+                                                                            "name": "varStatus",
+                                                                            "value": "confirmed"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            },
+                                                            "expression": "@items('For_each')?['showAs']",
+                                                            "type": "Switch"
+                                                        },
+                                                        "List_the_events_on_a_calendar": {
+                                                            "runAfter": {
+                                                                "Switch": [
+                                                                    "Succeeded"
+                                                                ]
+                                                            },
+                                                            "type": "ApiConnection",
+                                                            "inputs": {
+                                                                "host": {
+                                                                    "connection": {
+                                                                        "name": "@parameters('$connections')['googlecalendar']['connectionId']"
+                                                                    }
+                                                                },
+                                                                "method": "get",
+                                                                "path": "/calendars/@{encodeURIComponent('johndoe@gmail.com')}/events",
+                                                                "queries": {
+                                                                    "q": "__{{@{items('For_each')?['id']}}}__"
+                                                                },
+                                                                "retryPolicy": {
+                                                                    "type": "fixed",
+                                                                    "count": 20,
+                                                                    "interval": "PT60S"
+                                                                }
+                                                            }
+                                                        },
+                                                        "If_event_does_not_exist": {
+                                                            "actions": {
+                                                                "If_ActionType_!=_deleted": {
+                                                                    "actions": {
+                                                                        "Create_an_event_2": {
+                                                                            "type": "ApiConnection",
+                                                                            "inputs": {
+                                                                                "host": {
+                                                                                    "connection": {
+                                                                                        "name": "@parameters('$connections')['googlecalendar']['connectionId']"
+                                                                                    }
+                                                                                },
+                                                                                "method": "post",
+                                                                                "body": {
+                                                                                    "start": "@{items('For_each')?['startWithTimeZone']}",
+                                                                                    "end": "@{items('For_each')?['endWithTimeZone']}",
+                                                                                    "summary": "@variables('varSubject')",
+                                                                                    "description": "Organizer: @{items('For_each')?['organizer']}",
+                                                                                    "status": "@variables('varStatus')"
+                                                                                },
+                                                                                "path": "/calendars/@{encodeURIComponent('johndoe@gmail.com')}/events"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "else": {
+                                                                        "actions": {}
+                                                                    },
+                                                                    "expression": {
+                                                                        "and": [
+                                                                            {
+                                                                                "not": {
+                                                                                    "equals": [
+                                                                                        "@items('For_each')?['ActionType']",
+                                                                                        "deleted"
+                                                                                    ]
+                                                                                }
+                                                                            }
+                                                                        ]
+                                                                    },
+                                                                    "type": "If"
+                                                                }
+                                                            },
+                                                            "runAfter": {
+                                                                "List_the_events_on_a_calendar": [
+                                                                    "Succeeded"
+                                                                ]
+                                                            },
+                                                            "else": {
+                                                                "actions": {
+                                                                    "delete_or_update": {
+                                                                        "actions": {
+                                                                            "For_each_event_to_delete": {
+                                                                                "foreach": "@body('List_the_events_on_a_calendar')?['items']",
+                                                                                "actions": {
+                                                                                    "Delete_an_event": {
+                                                                                        "type": "ApiConnection",
+                                                                                        "inputs": {
+                                                                                            "host": {
+                                                                                                "connection": {
+                                                                                                    "name": "@parameters('$connections')['googlecalendar']['connectionId']"
+                                                                                                }
+                                                                                            },
+                                                                                            "method": "delete",
+                                                                                            "path": "/calendars/@{encodeURIComponent('johndoe@gmail.com')}/events/@{encodeURIComponent(items('For_each_event_to_delete')?['id'])}"
+                                                                                        }
+                                                                                    }
+                                                                                },
+                                                                                "type": "Foreach"
+                                                                            }
+                                                                        },
+                                                                        "else": {
+                                                                            "actions": {
+                                                                                "For_each_event_to_update": {
+                                                                                    "foreach": "@body('List_the_events_on_a_calendar')?['items']",
+                                                                                    "actions": {
+                                                                                        "Update_an_event": {
+                                                                                            "type": "ApiConnection",
+                                                                                            "inputs": {
+                                                                                                "host": {
+                                                                                                    "connection": {
+                                                                                                        "name": "@parameters('$connections')['googlecalendar']['connectionId']"
+                                                                                                    }
+                                                                                                },
+                                                                                                "method": "patch",
+                                                                                                "body": {
+                                                                                                    "summary": "@variables('varSubject')",
+                                                                                                    "start": "@{items('For_each')?['startWithTimeZone']}",
+                                                                                                    "end": "@{items('For_each')?['endWithTimeZone']}",
+                                                                                                    "description": "Organizer: @{items('For_each')?['organizer']}",
+                                                                                                    "status": "@variables('varStatus')"
+                                                                                                },
+                                                                                                "path": "/calendars/@{encodeURIComponent('johndoe@gmail.com')}/events/@{encodeURIComponent(items('For_each_event_to_update')?['id'])}"
+                                                                                            }
+                                                                                        }
+                                                                                    },
+                                                                                    "type": "Foreach"
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        "expression": {
+                                                                            "and": [
+                                                                                {
+                                                                                    "equals": [
+                                                                                        "@items('For_each')?['ActionType']",
+                                                                                        "deleted"
+                                                                                    ]
+                                                                                }
+                                                                            ]
+                                                                        },
+                                                                        "type": "If"
+                                                                    }
+                                                                }
+                                                            },
+                                                            "expression": {
+                                                                "or": [
+                                                                    {
+                                                                        "equals": [
+                                                                            "@empty(body('List_the_events_on_a_calendar'))",
+                                                                            "@true"
+                                                                        ]
+                                                                    },
+                                                                    {
+                                                                        "equals": [
+                                                                            "@length(body('List_the_events_on_a_calendar')?['items'])",
+                                                                            0
+                                                                        ]
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "type": "If"
+                                                        }
+                                                    }
+                                                },
+                                                "expression": {
+                                                    "or": [
+                                                        {
+                                                            "contains": [
+                                                                "@items('For_each')?['requiredAttendees']",
+                                                                "@variables('gmailaddress')"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "contains": [
+                                                                "@items('For_each')?['optionalAttendees']",
+                                                                "@variables('gmailaddress')"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "and": [
+                                                                {
+                                                                    "not": {
+                                                                        "equals": [
+                                                                            "@items('For_each')?['ActionType']",
+                                                                            "deleted"
+                                                                        ]
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "startsWith": [
+                                                                        "@items('For_each')?['subject']",
+                                                                        "@{variables('gmailprefix')} |"
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                "type": "If"
+                                            }
+                                        }
+                                    },
+                                    "expression": {
+                                        "and": [
+                                            {
+                                                "equals": [
+                                                    "@items('For_each')?['subject']",
+                                                    "@null"
+                                                ]
+                                            },
+                                            {
+                                                "not": {
+                                                    "equals": [
+                                                        "@items('For_each')?['ActionType']",
+                                                        "deleted"
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "type": "If"
+                                }
+                            },
+                            "runAfter": {
+                                "Initialize_variable_-_varStatus": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Foreach"
+                        },
+                        "Initialize_variable_-_varStatus": {
+                            "runAfter": {
+                                "Initialize_variable_-_varSubject": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "varStatus",
+                                        "type": "string",
+                                        "value": "confirmed"
+                                    }
+                                ]
+                            }
+                        },
+                        "Initialize_variable_-_varSubject": {
+                            "runAfter": {
+                                "Initialize_variable_-_gmailaddress": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "varSubject",
+                                        "type": "string"
+                                    }
+                                ]
+                            }
+                        },
+                        "Initialize_variable_-_m365emailprefix": {
+                            "runAfter": {},
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "m365emailprefix",
+                                        "type": "string",
+                                        "value": "RT"
+                                    }
+                                ]
+                            }
+                        },
+                        "Initialize_variable_-_gmailprefix": {
+                            "runAfter": {
+                                "Initialize_variable_-_m365emailprefix": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "gmailprefix",
+                                        "type": "string",
+                                        "value": "GM"
+                                    }
+                                ]
+                            }
+                        },
+                        "Initialize_variable_-_gmailaddress": {
+                            "runAfter": {
+                                "Initialize_variable_-_gmailprefix": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "gmailaddress",
+                                        "type": "string",
+                                        "value": "johndoe@gmail.com"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "office365": {
+                                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'managedApis/office365')]",
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_office365_name'))]",
+                                "connectionName": "office365"
+                            },
+                            "googlecalendar": {
+                                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'managedApis/googlecalendar')]",
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_googlecalendar_name'))]",
+                                "connectionName": "googlecalendar"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}
