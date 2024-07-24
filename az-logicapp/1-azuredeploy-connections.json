@@ -1,0 +1,123 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "connections_gmail_name": {
+            "defaultValue": "gmail",
+            "type": "String"
+        },
+        "connections_office365_name": {
+            "defaultValue": "office365",
+            "type": "String"
+        },
+        "connections_googlecalendar_name": {
+            "defaultValue": "googlecalendar",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Web/connections",
+            "apiVersion": "2016-06-01",
+            "name": "[parameters('connections_gmail_name')]",
+            "location": "eastus",
+            "kind": "V1",
+            "properties": {
+                "displayName": "[parameters('connections_gmail_name')]",
+                "statuses": [
+                    {
+                        "status": "Connected"
+                    }
+                ],
+                "customParameterValues": {},
+                "nonSecretParameterValues": {},
+                "createdTime": "2024-07-24T09:19:57.1567775Z",
+                "changedTime": "2024-07-24T09:22:12.8678124Z",
+                "api": {
+                    "name": "[parameters('connections_gmail_name')]",
+                    "displayName": "Gmail",
+                    "description": "Gmail is a web-based email service from Google. With the Gmail connector, you can perform actions such as send or receive e-mail messages, and trigger flows on new e-mails.",
+                    "iconUri": "[concat('https://connectoricons-prod.azureedge.net/u/jayawan/releases/v1.0.1694/1.0.1694.3753/', parameters('connections_gmail_name'), '/icon.png')]",
+                    "brandColor": "#20427f",
+                    "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'/managedApis/', parameters('connections_gmail_name'))]",
+                    "type": "Microsoft.Web/locations/managedApis"
+                },
+                "testLinks": [
+                    {
+                        "requestUri": "[concat('https://management.azure.com:443/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Web/connections/', parameters('connections_gmail_name'), '/extensions/proxy/TestConnection?api-version=2016-06-01')]",
+                        "method": "get"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Web/connections",
+            "apiVersion": "2016-06-01",
+            "name": "[parameters('connections_googlecalendar_name')]",
+            "location": "eastus",
+            "kind": "V1",
+            "properties": {
+                "displayName": "[parameters('connections_googlecalendar_name')]",
+                "statuses": [
+                    {
+                        "status": "Connected"
+                    }
+                ],
+                "customParameterValues": {},
+                "nonSecretParameterValues": {},
+                "createdTime": "2024-07-24T09:19:57.385143Z",
+                "changedTime": "2024-07-24T09:23:16.1418955Z",
+                "api": {
+                    "name": "[parameters('connections_googlecalendar_name')]",
+                    "displayName": "Google Calendar",
+                    "description": "Google Calendar lets you organize your schedule and share events with co-workers and friends. With Google's free online calendar, it's easy to keep track of your daily schedule.",
+                    "iconUri": "[concat('https://connectoricons-prod.azureedge.net/releases/v1.0.1686/1.0.1686.3695/', parameters('connections_googlecalendar_name'), '/icon.png')]",
+                    "brandColor": "#3b5998",
+                    "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'/managedApis/', parameters('connections_googlecalendar_name'))]",
+                    "type": "Microsoft.Web/locations/managedApis"
+                },
+                "testLinks": [
+                    {
+                        "requestUri": "[concat('https://management.azure.com:443/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Web/connections/', parameters('connections_googlecalendar_name'), '/extensions/proxy/users/me/calendarList?api-version=2016-06-01')]",
+                        "method": "get"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Web/connections",
+            "apiVersion": "2016-06-01",
+            "name": "[parameters('connections_office365_name')]",
+            "location": "eastus",
+            "kind": "V1",
+            "properties": {
+                "displayName": "[parameters('connections_office365_name')]",
+                "statuses": [
+                    {
+                        "status": "Connected"
+                    }
+                ],
+                "customParameterValues": {},
+                "nonSecretParameterValues": {},
+                "createdTime": "2024-07-24T09:19:56.6886468Z",
+                "changedTime": "2024-07-24T09:23:47.9224Z",
+                "api": {
+                    "name": "[parameters('connections_office365_name')]",
+                    "displayName": "Office 365 Outlook",
+                    "description": "Microsoft Office 365 is a cloud-based service that is designed to help meet your organization's needs for robust security, reliability, and user productivity.",
+                    "iconUri": "[concat('https://connectoricons-prod.azureedge.net/releases/v1.0.1686/1.0.1686.3706/', parameters('connections_office365_name'), '/icon.png')]",
+                    "brandColor": "#0078D4",
+                    "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'/managedApis/', parameters('connections_office365_name'))]",
+                    "type": "Microsoft.Web/locations/managedApis"
+                },
+                "testLinks": [
+                    {
+                        "requestUri": "[concat('https://management.azure.com:443/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Web/connections/', parameters('connections_office365_name'), '/extensions/proxy/testconnection?api-version=2016-06-01')]",
+                        "method": "get"
+                    }
+                ]
+            }
+        }
+    ]
+}
