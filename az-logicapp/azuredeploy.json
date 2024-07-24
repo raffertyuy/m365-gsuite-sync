@@ -10,15 +10,15 @@
             "defaultValue": "office365",
             "type": "String"
         },
-        "workflows_raz_gsuitetom365_cal_name": {
+        "workflows_gsuitetom365_cal_name": {
             "defaultValue": "raz-gsuitetom365-cal",
             "type": "String"
         },
-        "workflows_raz_m365togsuite_cal_name": {
+        "workflows_m365togsuite_cal_name": {
             "defaultValue": "raz-m365togsuite-cal",
             "type": "String"
         },
-        "workflows_raz_gsuitetom365_email_name": {
+        "workflows_gsuitetom365_email_name": {
             "defaultValue": "raz-gsuitetom365-email",
             "type": "String"
         },
@@ -51,7 +51,7 @@
                     "description": "Gmail is a web-based email service from Google. With the Gmail connector, you can perform actions such as send or receive e-mail messages, and trigger flows on new e-mails.",
                     "iconUri": "https://connectoricons-prod.azureedge.net/u/jayawan/releases/v1.0.1694/1.0.1694.3753/gmail/icon.png",
                     "brandColor": "#20427f",
-                    "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'managedApis/gmail')]",
+                    "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'/managedApis/gmail')]",
                     "type": "Microsoft.Web/locations/managedApis"
                 },
                 "testLinks": [
@@ -69,7 +69,7 @@
             "location": "eastus",
             "kind": "V1",
             "properties": {
-                "displayName": "johndoe@gmail.com",
+                "displayName": "googlecalendar",
                 "statuses": [
                     {
                         "status": "Connected"
@@ -85,7 +85,7 @@
                     "description": "Google Calendar lets you organize your schedule and share events with co-workers and friends. With Google's free online calendar, it's easy to keep track of your daily schedule.",
                     "iconUri": "https://connectoricons-prod.azureedge.net/releases/v1.0.1686/1.0.1686.3695/googlecalendar/icon.png",
                     "brandColor": "#3b5998",
-                    "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'managedApis/googlecalendar')]",
+                    "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'/managedApis/googlecalendar')]",
                     "type": "Microsoft.Web/locations/managedApis"
                 },
                 "testLinks": [
@@ -103,7 +103,7 @@
             "location": "eastus",
             "kind": "V1",
             "properties": {
-                "displayName": "jdoe@raztype.com",
+                "displayName": "office365",
                 "statuses": [
                     {
                         "status": "Connected"
@@ -119,7 +119,7 @@
                     "description": "Microsoft Office 365 is a cloud-based service that is designed to help meet your organization's needs for robust security, reliability, and user productivity.",
                     "iconUri": "https://connectoricons-prod.azureedge.net/releases/v1.0.1686/1.0.1686.3706/office365/icon.png",
                     "brandColor": "#0078D4",
-                    "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'managedApis/office365')]",
+                    "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'/managedApis/office365')]",
                     "type": "Microsoft.Web/locations/managedApis"
                 },
                 "testLinks": [
@@ -133,7 +133,7 @@
         {
             "type": "Microsoft.Logic/workflows",
             "apiVersion": "2017-07-01",
-            "name": "[parameters('workflows_raz_gsuitetom365_email_name')]",
+            "name": "[parameters('workflows_gsuitetom365_email_name')]",
             "location": "eastus",
             "dependsOn": [
                 "[resourceId('Microsoft.Web/connections', parameters('connections_gmail_name'))]"
@@ -386,7 +386,7 @@
                     "$connections": {
                         "value": {
                             "gmail": {
-                                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'managedApis/gmail')]",
+                                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'/managedApis/gmail')]",
                                 "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_gmail_name'))]",
                                 "connectionName": "gmail"
                             }
@@ -398,7 +398,7 @@
         {
             "type": "Microsoft.Logic/workflows",
             "apiVersion": "2017-07-01",
-            "name": "[parameters('workflows_raz_gsuitetom365_cal_name')]",
+            "name": "[parameters('workflows_gsuitetom365_cal_name')]",
             "location": "eastus",
             "dependsOn": [
                 "[resourceId('Microsoft.Web/connections', parameters('connections_googlecalendar_name'))]",
@@ -732,12 +732,12 @@
                     "$connections": {
                         "value": {
                             "googlecalendar": {
-                                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'managedApis/googlecalendar')]",
+                                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'/managedApis/googlecalendar')]",
                                 "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_googlecalendar_name'))]",
                                 "connectionName": "googlecalendar"
                             },
                             "office365": {
-                                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'managedApis/office365')]",
+                                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'/managedApis/office365')]",
                                 "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_office365_name'))]",
                                 "connectionName": "office365"
                             }
@@ -749,7 +749,7 @@
         {
             "type": "Microsoft.Logic/workflows",
             "apiVersion": "2017-07-01",
-            "name": "[parameters('workflows_raz_m365togsuite_cal_name')]",
+            "name": "[parameters('workflows_m365togsuite_cal_name')]",
             "location": "eastus",
             "dependsOn": [
                 "[resourceId('Microsoft.Web/connections', parameters('connections_office365_name'))]",
@@ -1231,14 +1231,19 @@
                     "$connections": {
                         "value": {
                             "office365": {
-                                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'managedApis/office365')]",
+                                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'/managedApis/office365')]",
                                 "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_office365_name'))]",
                                 "connectionName": "office365"
                             },
                             "googlecalendar": {
-                                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'managedApis/googlecalendar')]",
+                                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'/managedApis/googlecalendar')]",
                                 "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_googlecalendar_name'))]",
                                 "connectionName": "googlecalendar"
+                            },
+                            "gmail": {
+                                "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',resourceGroup().location,'/managedApis/gmail')]",
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_gmail_name'))]",
+                                "connectionName": "gmail"
                             }
                         }
                     }
